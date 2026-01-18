@@ -178,18 +178,17 @@ ${n.innerHTML}
 `?u:u[u.length-1]===`
 `?u.slice(0,-1):u};return e.renderer.rules.hardbreak=n(e.renderer.rules.hardbreak),e.renderer.rules.softbreak=n(e.renderer.rules.softbreak),e.renderer.rules.fence=n(e.renderer.rules.fence),e.renderer.rules.code_block=n(e.renderer.rules.code_block),e.renderer.renderToken=n(e.renderer.renderToken.bind(e.renderer)),e}}const DO=$e.create({name:"markdownClipboard",addOptions(){return{transformPastedText:!1,transformCopiedText:!1}},addProseMirrorPlugins(){return[new Pe({key:new ct("markdownClipboard"),props:{clipboardTextParser:(t,e,n)=>{if(n||!this.options.transformPastedText)return null;const r=this.editor.storage.markdown.parser.parse(t,{inline:!0});return br.fromSchema(this.editor.schema).parseSlice(wp(r),{preserveWhitespace:!0,context:e})},clipboardTextSerializer:t=>this.options.transformCopiedText?this.editor.storage.markdown.serializer.serialize(t.content):null}})]}}),wO=$e.create({name:"markdown",priority:50,addOptions(){return{html:!0,tightLists:!0,tightListClass:"tight",bulletListMarker:"-",linkify:!1,breaks:!1,transformPastedText:!1,transformCopiedText:!1}},addCommands(){const t=Ix.Commands.config.addCommands();return{setContent:(e,n)=>r=>t.setContent(r.editor.storage.markdown.parser.parse(e),n)(r),insertContentAt:(e,n,r)=>u=>t.insertContentAt(e,u.editor.storage.markdown.parser.parse(n,{inline:!0}),r)(u)}},onBeforeCreate(){this.editor.storage.markdown={options:{...this.options},parser:new _O(this.editor,this.options),serializer:new MO(this.editor),getMarkdown:()=>this.editor.storage.markdown.serializer.serialize(this.editor.state.doc)},this.editor.options.initialContent=this.editor.options.content,this.editor.options.content=this.editor.storage.markdown.parser.parse(this.editor.options.content)},onCreate(){this.editor.options.content=this.editor.options.initialContent,delete this.editor.options.initialContent},addStorage(){return{}},addExtensions(){return[Nw.configure({tight:this.options.tightLists,tightClass:this.options.tightListClass}),DO.configure({transformPastedText:this.options.transformPastedText,transformCopiedText:this.options.transformCopiedText})]}}),OO=({content:t,onUpdate:e,setEditor:n})=>{const r=GA({extensions:[a_,z_,wO.configure({html:!0,tightLists:!0,tightListClass:"tight",bulletListMarker:"-",linkify:!1,breaks:!0,transformPastedText:!0,transformCopiedText:!0})],content:t,onUpdate:({editor:u})=>{e(u)},editorProps:{attributes:{class:"prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none markdown-body editor-content"}}});return Ve.useEffect(()=>{r&&n(r)},[r,n]),Ve.useEffect(()=>{const u=r.storage.markdown;r&&u&&t!==u.getMarkdown()&&r.commands.setContent(t)},[t,r]),ue.jsx("div",{className:"editor-container",children:ue.jsx(FA,{editor:r})})},NO=`# シンプルなMarkdownエディタへようこそ
 
-これは **Obsidianライク** なライブプレビューエディタです。
 入力したMarkdown記法がリアルタイムで反映されます。
 
-## 基本的な使い方
-- \`#\` で見出しを作成（H1〜H6）
-- \`-\` または \`*\` でリスト作成
-- \`**太字**\` や \`*斜体*\` も即座に反映
-- \`>\` で引用
+## 機能紹介
+- **インポート**: 右上の「UPLOAD」アイコンから `.md` または `.txt` ファイルを読み込めます。
+- **エクスポート**: 「DOWNLOAD」アイコンから、ファイル名を指定して保存できます。
+- **リッチツールバー**: 太字やリストなどの書式設定も可能です。
 
-> "書くことに集中しよう、フォーマットではなく。"
+## 基本的な記法
+- \`#\` で見出し
+- \`-\` でリスト
+- \`**太字**\`
 
-ここに入力してみてください：
-- リスト1
-- リスト2
+> "この文章を消去して、ご自由にお書きください。"
 `;function zO(){const[t,e]=Ve.useState(NO),[n,r]=Ve.useState(!0),[u,s]=Ve.useState(null);Ve.useEffect(()=>{document.body.setAttribute("data-theme",n?"dark":"light"),document.body.style.backgroundColor=n?"#09090b":"#ffffff"},[n]);const o=()=>r(!n),c=h=>{e(h)},d=()=>{if(!u)return;const h=window.prompt("ファイル名を入力してください","document");if(!h)return;const m=u.storage.markdown;if(!m){console.warn("Markdown storage not available");return}const b=m.getMarkdown(),y=new Blob([b],{type:"text/markdown"}),x=URL.createObjectURL(y),k=document.createElement("a");k.href=x,k.download=`${h}.md`,document.body.appendChild(k),k.click(),document.body.removeChild(k),URL.revokeObjectURL(x)};return ue.jsxs("div",{className:"app-container",children:[ue.jsx(_T,{editor:u,isDarkMode:n,toggleTheme:o,onImport:c,onExport:d}),ue.jsx("div",{className:"workspace",children:ue.jsx(OO,{content:t,onUpdate:()=>{},setEditor:s})})]})}H4.createRoot(document.getElementById("root")).render(ue.jsx(Ve.StrictMode,{children:ue.jsx(zO,{})}));

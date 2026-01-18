@@ -193,41 +193,48 @@ button {
   font-size: 1.25em;
 }
 
-/* Dynamic Syntax Reveal (Obsidian-like) */
+/* Dynamic Syntax Reveal */
+/* Ensure syntax inherits heading size but perhaps is lighter in color */
 .ProseMirror h1.has-focus::before {
   content: '# ';
   color: var(--accent-color);
-  font-weight: 300;
+  opacity: 0.5;
+  font-weight: inherit;
 }
 
 .ProseMirror h2.has-focus::before {
   content: '## ';
   color: var(--accent-color);
-  font-weight: 300;
+  opacity: 0.5;
+  font-weight: inherit;
 }
 
 .ProseMirror h3.has-focus::before {
   content: '### ';
   color: var(--accent-color);
-  font-weight: 300;
+  opacity: 0.5;
+  font-weight: inherit;
 }
 
 .ProseMirror h4.has-focus::before {
   content: '#### ';
   color: var(--accent-color);
-  font-weight: 300;
+  opacity: 0.5;
+  font-weight: inherit;
 }
 
 .ProseMirror h5.has-focus::before {
   content: '##### ';
   color: var(--accent-color);
-  font-weight: 300;
+  opacity: 0.5;
+  font-weight: inherit;
 }
 
 .ProseMirror h6.has-focus::before {
   content: '###### ';
   color: var(--accent-color);
-  font-weight: 300;
+  opacity: 0.5;
+  font-weight: inherit;
 }
 
 /* Lists */

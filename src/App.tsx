@@ -2,20 +2,22 @@ import { useState, useEffect } from 'react';
 import { Toolbar } from './components/Toolbar';
 import TiptapEditor from './components/TiptapEditor'; // Assuming we rename/create this
 
-const DEFAULT_MARKDOWN = `# Welcome to Live Editor
+const DEFAULT_MARKDOWN = `# シンプルなMarkdownエディタへようこそ
 
-This is an **Obsidian-like** live preview editor.
+これは **Obsidianライク** なライブプレビューエディタです。
+入力したMarkdown記法がリアルタイムで反映されます。
 
-## Key Features
-- What you see is what you get.
-- Use markdown shortcuts like \`#\` for headers or \`-\` for lists.
-- **Bold** and *Italic* are rendered immediately.
+## 基本的な使い方
+- \`#\` で見出しを作成（H1〜H6）
+- \`-\` または \`*\` でリスト作成
+- \`**太字**\` や \`*斜体*\` も即座に反映
+- \`>\` で引用
 
-> "Focus on writing, not formatting."
+> "書くことに集中しよう、フォーマットではなく。"
 
-Try typing below:
-- Item 1
-- Item 2
+ここに入力してみてください：
+- リスト1
+- リスト2
 `;
 
 function App() {
@@ -37,6 +39,11 @@ function App() {
 
   const handleExport = () => {
     if (!editor) return;
+
+    // Prompt for filename
+    const filename = window.prompt("ファイル名を入力してください", "document");
+    if (!filename) return; // Cancelled
+
     const markdownStorage = (editor.storage as any).markdown;
     if (!markdownStorage) {
       console.warn('Markdown storage not available');
@@ -47,7 +54,7 @@ function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'document.md';
+    a.download = `${filename}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

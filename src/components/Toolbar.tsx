@@ -49,7 +49,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <div className="toolbar">
       <div className="toolbar-title">
         <FileText size={20} className="text-accent" style={{ color: 'var(--accent-color)' }} />
-        <span>MD Editor</span>
       </div>
 
       {/* Formatting Tools */}

@@ -198,43 +198,43 @@ button {
 .ProseMirror h1.has-focus::before {
   content: '# ';
   color: var(--accent-color);
-  opacity: 0.5;
   font-weight: inherit;
+  opacity: 1;
 }
 
 .ProseMirror h2.has-focus::before {
   content: '## ';
   color: var(--accent-color);
-  opacity: 0.5;
   font-weight: inherit;
+  opacity: 1;
 }
 
 .ProseMirror h3.has-focus::before {
   content: '### ';
   color: var(--accent-color);
-  opacity: 0.5;
   font-weight: inherit;
+  opacity: 1;
 }
 
 .ProseMirror h4.has-focus::before {
   content: '#### ';
   color: var(--accent-color);
-  opacity: 0.5;
   font-weight: inherit;
+  opacity: 1;
 }
 
 .ProseMirror h5.has-focus::before {
   content: '##### ';
   color: var(--accent-color);
-  opacity: 0.5;
   font-weight: inherit;
+  opacity: 1;
 }
 
 .ProseMirror h6.has-focus::before {
   content: '###### ';
   color: var(--accent-color);
-  opacity: 0.5;
   font-weight: inherit;
+  opacity: 1;
 }
 
 /* Lists */

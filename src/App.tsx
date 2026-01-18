@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Toolbar } from './components/Toolbar';
-import TiptapEditor from './components/TiptapEditor'; // Assuming we rename/create this
+import TiptapEditor from './components/TiptapEditor';
+import { FormattingBar } from './components/FormattingBar';
 
 const DEFAULT_MARKDOWN = `# シンプルなMarkdownエディタへようこそ
 
@@ -63,7 +64,6 @@ function App() {
   return (
     <div className="app-container">
       <Toolbar
-        editor={editor}
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
         onImport={handleImport}
@@ -72,14 +72,11 @@ function App() {
       <div className="workspace">
         <TiptapEditor
           content={markdown}
-          onUpdate={() => {
-            // We don't strictly need to sync state back to 'markdown' on every keystroke 
-            // unless we want to persist it or debug.
-            // We can just rely on editor instance for export.
-          }}
+          onUpdate={() => { }}
           setEditor={setEditor}
         />
       </div>
+      <FormattingBar editor={editor} />
     </div>
   );
 }

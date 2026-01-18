@@ -73,7 +73,8 @@ button {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  padding: 6px;
+  padding: 8px;
+  /* Slightly larger targets for mobile */
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -97,10 +98,13 @@ button {
   flex-direction: column;
   height: 100vh;
   width: 100vw;
+  position: relative;
 }
 
+/* Top Toolbar (Import/Export/Theme) */
 .toolbar {
-  height: 50px;
+  height: 60px;
+  /* Slightly taller for ease of use */
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
   display: flex;
@@ -108,36 +112,29 @@ button {
   justify-content: space-between;
   padding: 0 20px;
   flex-shrink: 0;
+  z-index: 10;
 }
 
 .toolbar-title {
-  font-weight: 600;
-  font-size: 1rem;
+  /* Logo only */
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-right: 20px;
-}
-
-.toolbar-group {
-  display: flex;
-  gap: 4px;
   align-items: center;
 }
 
 .toolbar-actions {
   display: flex;
-  gap: 4px;
+  gap: 12px;
   align-items: center;
 }
 
 .separator {
   width: 1px;
-  height: 20px;
+  height: 24px;
   background-color: var(--border-color);
-  margin: 0 6px;
+  margin: 0 4px;
 }
 
+/* Workspace */
 .workspace {
   flex: 1;
   overflow: hidden;
@@ -145,6 +142,8 @@ button {
   justify-content: center;
   background-color: var(--bg-primary);
   padding-top: 20px;
+  /* Add padding bottom to account for Bottom Bar (approx 60-80px) */
+  padding-bottom: 80px;
 }
 
 /* Tiptap Editor Styles */
@@ -154,7 +153,34 @@ button {
   margin: 0 auto;
   height: 100%;
   overflow-y: auto;
-  padding: 0 20px 100px;
+  padding: 0 20px 40px;
+}
+
+/* Bottom Formatting Bar */
+.formatting-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Center buttons */
+  z-index: 20;
+  padding: 0 10px;
+  overflow-x: auto;
+  /* Allow scrolling if many buttons */
+}
+
+.formatting-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  white-space: nowrap;
+  /* Prevent wrapping */
 }
 
 /* ProseMirror Core Styles */
@@ -194,7 +220,6 @@ button {
 }
 
 /* Dynamic Syntax Reveal */
-/* Ensure syntax inherits heading size but perhaps is lighter in color */
 .ProseMirror h1.has-focus::before {
   content: '# ';
   color: var(--accent-color);
@@ -266,7 +291,6 @@ button {
   content: '> ';
   position: absolute;
   left: -20px;
-  /* Adjust based heavily on padding/border */
   top: 0;
   color: var(--accent-color);
 }
@@ -296,7 +320,7 @@ button {
   color: inherit;
 }
 
-/* Empty State Placeholder (Optional) */
+/* Empty State Placeholder */
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;

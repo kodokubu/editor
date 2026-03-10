@@ -6,6 +6,7 @@
     --accent-hover: #2563eb;
     --sidebar-bg: #18181b;
     --border-color: #27272a;
+    --sidebar-width: 260px;
 }
 
 [data-theme='light'] {
@@ -30,21 +31,35 @@ body {
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
+    font-size: 0.95rem;
 }
 
 .app-container {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    flex-direction: row;
+    /* サイドバー対応 */
+    height: 100vh;
+    overflow: hidden;
+    /* 全体スクロール禁止 */
     background-color: var(--bg-color);
 }
 
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+}
+
 header {
-    height: 60px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1.5rem;
+    padding: 0 1.25rem;
     background-color: var(--sidebar-bg);
     border-bottom: 1px solid var(--border-color);
     position: sticky;
@@ -52,11 +67,159 @@ header {
     z-index: 100;
 }
 
+.sidebar-toggle {
+    background: transparent;
+    border: none;
+    color: #a1a1aa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+}
+
+.logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.logo-group:hover {
+    background: rgba(128, 128, 128, 0.1);
+}
+
 .logo {
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     letter-spacing: -0.025em;
     color: var(--accent-color);
+}
+
+/* History Sidebar */
+.history-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    /* 常に最前面に */
+    position: relative;
+    overflow: hidden;
+    /* 閉じたときに中身をはみ出させない */
+}
+
+.history-sidebar.closed {
+    width: 0;
+    transform: translateX(-100%);
+    pointer-events: none;
+    /* 閉じている時はクリックを無効化 */
+    border-right: none;
+    opacity: 0;
+    /* 完全に消す */
+}
+
+.sidebar-header,
+.history-list {
+    min-width: var(--sidebar-width);
+    /* 幅が変わっても中身が潰れないように保持 */
+    transition: opacity 0.2s;
+}
+
+.history-sidebar.closed .sidebar-header,
+.history-sidebar.closed .history-list {
+    opacity: 0;
+}
+
+.sidebar-header {
+    padding: 1.5rem 1.25rem 1rem 1.25rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+    scrollbar-gutter: stable;
+    /* スクロールバーが出てもレイアウトがズレないように */
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    color: #a1a1aa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.history-item:hover {
+    background: rgba(128, 128, 128, 0.08);
+    color: var(--text-color);
+}
+
+.history-item.active {
+    background: var(--border-color);
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.history-id {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
+}
+
+.delete-history {
+    color: #18181b;
+    /* デフォルト黒 (ダークモード時の背景に近い色) */
+    opacity: 0.4;
+    padding: 4px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.history-item:hover .delete-history {
+    opacity: 0.6;
+}
+
+.delete-history:hover {
+    color: #ffffff;
+    /* ホバー時白 */
+    opacity: 1;
+    background: rgba(239, 68, 68, 0.2);
+}
+
+[data-theme='light'] .delete-history {
+    color: #e4e4e7;
+    /* ライトモード時のデフォルト (薄いグレー) */
+}
+
+[data-theme='light'] .delete-history:hover {
+    color: #18181b;
 }
 
 .main-content {
@@ -65,11 +228,16 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    z-index: 10;
+    overflow-y: auto;
+    /* メインエリアのみスクロール */
+    height: 100%;
 }
 
 .editor-surface {
     width: 100%;
-    max-width: 800px;
+    max-width: 760px;
     background: transparent;
 }
 
@@ -82,42 +250,30 @@ header {
 }
 
 .landing h1 {
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 10vw, 3rem);
     margin-bottom: 1rem;
     font-weight: 900;
     background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
+    line-height: 1.1;
 }
 
 .landing p {
     color: #a1a1aa;
-    margin-bottom: 3rem;
-    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
 }
 
 .id-input-group {
     display: flex;
-    gap: 0;
     background-color: var(--sidebar-bg);
     padding: 0.25rem;
-    border-radius: 14px;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
-    transition: border-color 0.2s, box-shadow 0.2s;
     max-width: 500px;
     margin: 0 auto;
-}
-
-.id-input-group:focus-within {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
-
-.id-prefix {
-    padding: 0.75rem 0 0.75rem 1rem;
-    color: #71717a;
-    user-select: none;
-    font-size: 1rem;
 }
 
 .id-input {
@@ -125,113 +281,486 @@ header {
     background: transparent;
     border: none;
     color: var(--text-color);
-    font-size: 1.1rem;
-    font-weight: 500;
+    font-size: 1rem;
     outline: none;
-    padding: 0.75rem 0.5rem;
-    min-width: 0;
+    padding: 0.75rem 1rem;
+    width: 100%;
 }
 
 .go-button {
     background-color: var(--accent-color);
     color: white;
     border: none;
-    padding: 0 1.5rem;
-    border-radius: 10px;
+    padding: 0 1.25rem;
+    border-radius: 9px;
     font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s;
-    margin: 0.25rem;
 }
 
-.go-button:hover {
-    background-color: var(--accent-hover);
+/* Integrated Help Sidebar (PC) */
+.help-sidebar {
+    display: none;
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 210px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border-color);
+    padding: 2rem 1.25rem;
+    border-radius: 28px;
+    z-index: 40;
+    box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.6);
+}
+
+.help-sidebar h4 {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 0.04em;
+    opacity: 0.9;
+}
+
+.guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.guide-item {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #a1a1aa;
+    padding: 0.6rem 0.75rem;
+    border-radius: 12px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.guide-item:hover {
+    background: rgba(128, 128, 128, 0.08);
+    color: var(--text-color);
+    transform: scale(1.02);
+    border-color: var(--border-color);
+}
+
+.guide-symbol {
+    font-family: monospace;
+    font-size: 1rem;
+    opacity: 0.5;
+    width: 24px;
 }
 
 /* TipTap Editor Styling */
 .ProseMirror {
     outline: none;
     min-height: 60vh;
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     color: var(--text-color);
-    padding-bottom: 10rem;
+    padding-bottom: 12rem;
+    line-height: 1.6;
+    white-space: pre-wrap; /* 改行を保持 */
 }
 
 .ProseMirror p {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0; /* パラグラフ間の余白を調整（ライブプレビュー用） */
 }
 
-.ProseMirror h1 {
-    font-size: 2.5rem;
-    margin: 2rem 0 1.5rem 0;
+/* Markdown Decoration & Coloring */
+.md-h1 {
+    font-size: 2rem;
     font-weight: 800;
+    color: #60a5fa;
+    display: block;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
-.ProseMirror h2 {
-    font-size: 1.75rem;
-    margin: 1.5rem 0 1rem 0;
+.md-h2 {
+    font-size: 1.45rem;
     font-weight: 700;
+    color: #818cf8;
+    display: block;
+    margin-top: 1rem;
 }
 
-.ProseMirror h3 {
-    font-size: 1.35rem;
-    margin: 1.25rem 0 0.75rem 0;
+.md-h3 {
+    font-size: 1.2rem;
     font-weight: 600;
+    color: #a78bfa;
+    display: block;
+    margin-top: 0.8rem;
 }
 
-.toolbar {
-    display: flex;
-    gap: 0.25rem;
-    padding: 0.4rem;
-    background-color: var(--sidebar-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    position: sticky;
-    top: 70px;
-    z-index: 50;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    width: fit-content;
+.md-bold {
+    color: #fbbf24;
+    font-weight: bold;
 }
 
-.toolbar-button {
-    background: transparent;
-    border: none;
-    color: #a1a1aa;
-    padding: 0.5rem;
-    border-radius: 6px;
+.md-italic {
+    color: #34d399;
+    font-style: italic;
+}
+
+.md-blockquote {
+    border-left: 3px solid var(--accent-color);
+    padding-left: 1rem;
+    color: #94a3b8;
+    font-style: italic;
+    display: block;
+}
+
+.md-code {
+    background-color: rgba(128, 128, 128, 0.15);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+/* Symbols (Markdown markers) */
+.md-symbol {
+    color: rgba(128, 128, 128, 0.4) !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+}
+
+/* Links */
+.wiki-link {
+    color: #a78bfa !important;
+    background: rgba(167, 139, 250, 0.1);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     transition: all 0.2s;
 }
 
-.toolbar-button:hover {
-    background-color: var(--border-color);
-    color: var(--text-color);
+.wiki-link:hover {
+    color: #c4b5fd !important;
+    background: rgba(167, 139, 250, 0.2);
 }
 
-.toolbar-button.is-active {
-    background-color: var(--accent-color);
-    color: white;
+/* Code Blocks with Language Label */
+.ProseMirror pre {
+    background-color: rgba(128, 128, 128, 0.1);
+    padding: 2.2rem 1.25rem 1.25rem 1.25rem;
+    /* 上部パディングを広げてラベルスペースを確保 */
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+/* Tiptap / lowlight が付与する data-language 属性を利用 */
+.ProseMirror pre::before {
+    content: attr(data-language);
+    position: absolute;
+    top: 0.6rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+/* 言語が未設定の場合のフォールバック */
+.ProseMirror pre[data-language=""]::before {
+    content: "CODE";
+    opacity: 0.4;
+}
+
+.ProseMirror pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-family: 'Fira Code', 'JetBrains Mono', monospace;
+}
+
+.ProseMirror pre code::before,
+.ProseMirror pre code::after {
+    content: "";
+}
+
+/* Syntax Highlighting Colors (Lowlight) */
+.hljs-comment,
+.hljs-quote {
+    color: #828282;
+    font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+    color: #818cf8;
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+    color: #34d399;
+}
+
+.hljs-variable,
+.hljs-template-variable {
+    color: #fbbf24;
+}
+
+.hljs-type,
+.hljs-string,
+.hljs-number,
+.hljs-builtin-name,
+.hljs-builtin,
+.hljs-literal,
+.hljs-attr {
+    color: #f472b6;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+    color: #a78bfa;
+}
+
+.hljs-attribute,
+.hljs-name {
+    color: #60a5fa;
+}
+
+/* Lists Style */
+.ProseMirror ul,
+.ProseMirror ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.ProseMirror li {
+    margin-bottom: 0.4rem;
+}
+
+.ProseMirror li p {
+    margin-bottom: 0;
+}
+
+.ProseMirror ul li {
+    list-style: none;
+    position: relative;
+}
+
+.ProseMirror ul li::before {
+    content: "-";
+    position: absolute;
+    left: -1.2rem;
+    color: rgba(128, 128, 128, 0.6);
+}
+
+.ProseMirror ol li {
+    list-style: none;
+    counter-increment: list-counter;
+    position: relative;
+}
+
+.ProseMirror ol li::before {
+    content: counter(list-counter) ".";
+    position: absolute;
+    left: -1.5rem;
+    color: rgba(128, 128, 128, 0.6);
+    font-size: 0.9em;
+}
+
+/* Integrated Help Sidebar (PC) */
+.help-sidebar {
+    display: none;
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 210px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border-color);
+    padding: 2rem 1.25rem;
+    border-radius: 28px;
+    z-index: 40;
+    box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.6);
+}
+
+.help-sidebar h4 {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 0.04em;
+    opacity: 0.9;
+}
+
+.guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.guide-item {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #a1a1aa;
+    padding: 0.6rem 0.75rem;
+    border-radius: 12px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.guide-item:hover {
+    background: rgba(128, 128, 128, 0.08);
+    color: var(--text-color);
+    transform: scale(1.02);
+    border-color: var(--border-color);
+}
+
+.guide-symbol {
+    font-family: monospace;
+    font-size: 1rem;
+    opacity: 0.5;
+    width: 24px;
+}
+
+/* Mobile responsive */
+@media (max-width: 800px) {
+    .history-sidebar {
+        position: fixed;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        z-index: 2000;
+        /* モバイルではヘッダーより上に */
+    }
+
+    .history-sidebar.closed {
+        width: var(--sidebar-width);
+        transform: translateX(-100%);
+        pointer-events: none;
+    }
+
+    .main-wrapper {
+        min-width: 100vw;
+    }
+
+    header {
+        position: fixed;
+        width: 100%;
+        z-index: 100;
+        padding: 0 0.5rem;
+        gap: 0.25rem;
+    }
+
+    .sidebar-toggle {
+        margin-right: 0.25rem;
+    }
+
+    .logo {
+        display: none;
+        /* スマホではロゴ文字を非表示にしてスペース確保 */
+    }
+
+    .save-status {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.4rem;
+        white-space: nowrap;
+        /* 改行禁止 */
+    }
+
+    .download-button,
+    .toolbar-button {
+        padding: 0.3rem;
+    }
+
+    .main-content {
+        padding: 4.5rem 1rem 12rem 1rem;
+    }
+
+    .help-sidebar {
+        display: block;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        top: auto;
+        transform: none;
+        width: auto;
+        padding: 0.5rem;
+        border-radius: 16px;
+        background: rgba(24, 24, 27, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .help-sidebar h4 {
+        display: none;
+    }
+
+    .guide-list {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.5rem;
+        padding: 0.25rem;
+    }
+
+    .guide-item {
+        padding: 0.6rem 0.8rem;
+        white-space: nowrap;
+        border-radius: 10px;
+        flex-shrink: 0;
+        gap: 0.4rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .help-sidebar {
+        display: block;
+    }
 }
 
 .save-status {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     background: var(--border-color);
-    padding: 0.25rem 0.6rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 100px;
     color: #a1a1aa;
 }
 
-.tips h3 {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: var(--text-color);
+.download-button {
+    background: transparent;
+    border: none;
+    color: #a1a1aa;
+    padding: 0.4rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.25rem;
 }
 
-.tips li {
-    margin-bottom: 0.75rem;
+.download-button:hover {
+    color: var(--accent-color);
+    background: rgba(128, 128, 128, 0.1);
 }

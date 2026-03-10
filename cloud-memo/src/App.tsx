@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, useNavigate, useParams, Link } from 'reac
 import { useState, useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Markdown } from 'tiptap-markdown';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { Download, Moon, Sun, Home, ChevronRight, Menu, X, Clock, Trash2, Upload } from 'lucide-react';
@@ -86,6 +85,8 @@ const MarkdownHighlighter = Extension.create({
                             { regex: /_([^_]+)_/g, class: 'md-italic' },
                             { regex: /^>\s.*$/gm, class: 'md-blockquote' },
                             { regex: /`([^`]+)`/g, class: 'md-code' },
+                            { regex: /^-\s.*$/gm, class: 'md-list' },
+                            { regex: /^\d+\.\s.*$/gm, class: 'md-list' },
                         ];
 
                         tr.doc.descendants((node, pos) => {
@@ -108,8 +109,11 @@ const MarkdownHighlighter = Extension.create({
                                         } else if (className.startsWith('md-h')) {
                                             const hashCount = className.endsWith('h1') ? 2 : className.endsWith('h2') ? 3 : 4;
                                             decorations.push(Decoration.inline(from, from + hashCount, { class: 'md-symbol' }));
-                                        } else if (className === 'md-blockquote') {
-                                            decorations.push(Decoration.inline(from, from + 2, { class: 'md-symbol' }));
+                                        } else if (className === 'md-blockquote' || className === 'md-list') {
+                                            const symbolMatch = match[0].match(/^(>|-|\d+\.)\s/);
+                                            if (symbolMatch) {
+                                                decorations.push(Decoration.inline(from, from + symbolMatch[0].length, { class: 'md-symbol' }));
+                                            }
                                         }
                                     }
                                 });
@@ -291,13 +295,9 @@ const EditorPage = () => {
                 italic: false,
                 blockquote: false,
                 code: false,
-                bulletList: {},
-                orderedList: {},
+                bulletList: false,
+                orderedList: false,
                 codeBlock: false,
-            }),
-            Markdown.configure({
-                transformPastedText: false,
-                transformCopiedText: false,
             }),
             LinkExtension.configure({
                 openOnClick: true,

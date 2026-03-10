@@ -336,9 +336,9 @@ const EditorPage = () => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.content) {
-                        editor.commands.setContent(data.content);
+                        editor.commands.setContent(data.content, { emitUpdate: false });
                     } else {
-                        editor.commands.setContent(`# ${id}\n\nここにメモを書き始めてください。`);
+                        editor.commands.setContent(`# ${id}\n\nここにメモを書き始めてください。`, { emitUpdate: false });
                     }
                     setSaveStatus('保存済み');
                 })

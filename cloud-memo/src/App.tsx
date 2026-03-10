@@ -133,6 +133,38 @@ const MarkdownHighlighter = Extension.create({
     },
 });
 
+// リスト入力補助 (Enterで自動継続、空リストで解除)
+const ListAutoFormat = Extension.create({
+    name: 'listAutoFormat',
+    addKeyboardShortcuts() {
+        return {
+            Enter: ({ editor }) => {
+                const { state } = editor;
+                const { selection } = state;
+                const { $from, empty } = selection;
+                if (!empty) return false;
+
+                const currentLineText = $from.parent.textContent;
+                const match = currentLineText.match(/^([-*]|\d+\.)\s/);
+
+                if (match) {
+                    const prefix = match[0];
+                    if (currentLineText === prefix) {
+                        // 空のリスト項目だった場合、接頭辞を削除して通常の行にする
+                        editor.commands.deleteRange({ from: $from.pos - prefix.length, to: $from.pos });
+                        return true; // デフォルトのEnterをキャンセル
+                    } else {
+                        // 文字が入力されている場合、改行して同じ接頭辞を自動入力する
+                        editor.chain().splitBlock().insertContent(prefix).run();
+                        return true; // デフォルトのEnterをキャンセル
+                    }
+                }
+                return false; // 通常のEnter動作
+            },
+        };
+    },
+});
+
 // --- Landing Page ---
 
 const LandingPage = () => {
@@ -309,6 +341,7 @@ const EditorPage = () => {
             }),
             WikiLinkHighlighter,
             MarkdownHighlighter,
+            ListAutoFormat,
         ],
         content: '',
         onUpdate: ({ editor }) => {
@@ -336,9 +369,11 @@ const EditorPage = () => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.content) {
-                        editor.commands.setContent(data.content, { emitUpdate: false });
+                        const htmlContent = data.content.split('\n').map((line: string) => `<p>${line}</p>`).join('');
+                        editor.commands.setContent(htmlContent, { emitUpdate: false });
                     } else {
-                        editor.commands.setContent(`# ${id}\n\nここにメモを書き始めてください。`, { emitUpdate: false });
+                        const defaultContent = `# ${id}\n\nここにメモを書き始めてください。`.split('\n').map(line => `<p>${line}</p>`).join('');
+                        editor.commands.setContent(defaultContent, { emitUpdate: false });
                     }
                     setSaveStatus('保存済み');
                 })

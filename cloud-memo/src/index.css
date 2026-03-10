@@ -367,11 +367,13 @@ header {
     color: var(--text-color);
     padding-bottom: 12rem;
     line-height: 1.6;
-    white-space: pre-wrap; /* 改行を保持 */
+    white-space: pre-wrap;
+    /* 改行を保持 */
 }
 
 .ProseMirror p {
-    margin-bottom: 0; /* パラグラフ間の余白を調整（ライブプレビュー用） */
+    margin-bottom: 0;
+    /* パラグラフ間の余白を調整（ライブプレビュー用） */
 }
 
 /* Markdown Decoration & Coloring */
@@ -379,25 +381,25 @@ header {
     font-size: 2rem;
     font-weight: 800;
     color: #60a5fa;
-    display: block;
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
 }
 
 .md-h2 {
     font-size: 1.45rem;
     font-weight: 700;
     color: #818cf8;
-    display: block;
-    margin-top: 1rem;
 }
 
 .md-h3 {
     font-size: 1.2rem;
     font-weight: 600;
     color: #a78bfa;
-    display: block;
-    margin-top: 0.8rem;
+}
+
+/* 各装飾クラスに適切な上下の余白を持たせる */
+.md-h1,
+.md-h2,
+.md-h3 {
+    line-height: 1.8;
 }
 
 .md-bold {
@@ -415,7 +417,9 @@ header {
     padding-left: 1rem;
     color: #94a3b8;
     font-style: italic;
-    display: block;
+    display: inline-block;
+    /* 引用ラインを出すためにinline-block */
+    width: 100%;
 }
 
 .md-code {
